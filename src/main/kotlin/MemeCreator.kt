@@ -22,11 +22,11 @@ interface MemeCreator {
 
         override fun createFanEnjoyerMeme(fan: File, enjoyer: File, outputName: String): File {
             val fanCommand =
-                "ffmpeg -y -i ${fileManager.getFanVideoPath()} -vf subtitles=${fan.path}:force_style='Fontsize=14,Alignment=6' ${
+                "ffmpeg -y -i ${fileManager.getFanVideoPath()} -vf subtitles=${fan.path}:force_style='Fontsize=12,Alignment=6' ${
                     fileManager.getOutputPath("${outputName}fan.mp4").path
                 }"
             val enjoyerCommand =
-                "ffmpeg -y -i ${fileManager.getEnjoyerVideoPath()} -vf subtitles=${enjoyer.path}:force_style='Fontsize=14,Alignment=6' ${
+                "ffmpeg -y -i ${fileManager.getEnjoyerVideoPath()} -vf subtitles=${enjoyer.path}:force_style='Fontsize=12,Alignment=6' ${
                     fileManager.getOutputPath("${outputName}enjoyer.mp4").path
                 }"
             val connectVideoAndAddAudioCommand =
