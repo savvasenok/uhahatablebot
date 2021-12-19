@@ -16,17 +16,17 @@ interface MemeCreator {
                         "$outputName.mp4"
                     ).path
                 }"
-            sniffCommand.runCommand(fileManager.logFile)
+            sniffCommand.runCommand()
             return fileManager.getOutputPath("$outputName.mp4")
         }
 
         override fun createFanEnjoyerMeme(fan: File, enjoyer: File, outputName: String): File {
             val fanCommand =
-                "ffmpeg -y -i ${fileManager.getFanVideoPath()} -vf subtitles=${fan.path}:force_style='Fontsize=12,Alignment=6' ${
+                "ffmpeg -y -i ${fileManager.getFanVideoPath()} -vf subtitles=${fan.path}:force_style='Fontsize=14,Alignment=6' ${
                     fileManager.getOutputPath("${outputName}fan.mp4").path
                 }"
             val enjoyerCommand =
-                "ffmpeg -y -i ${fileManager.getEnjoyerVideoPath()} -vf subtitles=${enjoyer.path}:force_style='Fontsize=12,Alignment=6' ${
+                "ffmpeg -y -i ${fileManager.getEnjoyerVideoPath()} -vf subtitles=${enjoyer.path}:force_style='Fontsize=14,Alignment=6' ${
                     fileManager.getOutputPath("${outputName}enjoyer.mp4").path
                 }"
             val connectVideoAndAddAudioCommand =
@@ -34,9 +34,9 @@ interface MemeCreator {
                     fileManager.getOutputPath("${outputName}.mp4").path
                 }"
 
-            fanCommand.runCommand(fileManager.logFile)
-            enjoyerCommand.runCommand(fileManager.logFile)
-            connectVideoAndAddAudioCommand.runCommand(fileManager.logFile)
+            fanCommand.runCommand()
+            enjoyerCommand.runCommand()
+            connectVideoAndAddAudioCommand.runCommand()
 
             fileManager.deleteOutput("${outputName}fan")
             fileManager.deleteOutput("${outputName}enjoyer")
@@ -48,7 +48,10 @@ interface MemeCreator {
     }
 }
 
-fun String.runCommand(logFile: File) = ProcessBuilder("\\s".toRegex().split(this))
-    .redirectError(logFile)
+fun String.runCommand() = ProcessBuilder(
+    "\\s".toRegex()
+        .split(this)
+)
+    .redirectError(File("/home/savvasenok/Desktop/test.txt"))
     .start()
     .waitFor()

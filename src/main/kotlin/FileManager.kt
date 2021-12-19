@@ -1,14 +1,13 @@
-import content.*
+import content.CringeVideo
+import content.EnjoyerVideo
+import content.FanVideo
+import content.SniffVideo
 import java.io.File
 
 interface FileManager {
 
-    val logFile: File
-
     fun savePhoto(filename: String, bytes: ByteArray)
     fun getCringeVideo(): File
-    fun getItsBaseVideo(): File
-    fun getBasedVideo(): File
 
     fun getSniffVideoPath(): String
     fun getFanVideoPath(): String
@@ -20,7 +19,6 @@ interface FileManager {
     fun deleteOutput(filename: String)
     fun createFanEnjoyerSubs(fan: String, enjoyer: String, filename: String): Pair<File, File>
     fun getFanEnjoyerMusicPath(): File
-    fun getWomenVideo(): File
 
     class Base(
         private val srtGenerator: SRTGenerator,
@@ -29,10 +27,6 @@ interface FileManager {
         private val contentFolder = File(main, "content")
         private val savedContentFolder = File(main, "saved")
         private val outputContentFolder = File(main, "output")
-
-        override val logFile = File(main, "log.txt").apply {
-            createNewFile()
-        }
 
         init {
             if (!contentFolder.exists()) contentFolder.mkdir()
@@ -48,10 +42,9 @@ interface FileManager {
         }
 
         override fun getCringeVideo(): File = CringeVideo(contentFolder).file
-        override fun getItsBaseVideo(): File = ItsBaseVideo(contentFolder).file
-        override fun getBasedVideo(): File = BasedVideo(contentFolder).file
 
         override fun getSniffVideoPath(): String = SniffVideo(contentFolder).file.path
+
         override fun getFanVideoPath(): String = FanVideo(contentFolder).file.path
         override fun getEnjoyerVideoPath(): String = EnjoyerVideo(contentFolder).file.path
 
@@ -90,7 +83,5 @@ interface FileManager {
         }
 
         override fun getFanEnjoyerMusicPath() = File(contentFolder, "fan-enjoyer.mp3")
-
-        override fun getWomenVideo(): File = Women(contentFolder).file
     }
 }

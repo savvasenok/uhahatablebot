@@ -1,19 +1,18 @@
 class TextMatcher {
 
-    private val fanEnjoyerTextRegex = listOf(
-        "^[\\w\\W]+( > )[\\w\\W]+\$".toRegex(),
-        "^[\\w\\W]+( < )[\\w\\W]+\$".toRegex()
-    )
+    private val fanEnjoyerTextRegex = "^[A-zА-я0-9 ]+( > )[A-zА-я0-9 ]+\$".toRegex()
 
-    private val based = listOf("база", "базе", "базу", "базы", "базой", "base", "based")
-    private val women =
-        listOf("женщина", "женщины", "woman", "women", "women moment", "woman moment", "вумен", "вумен момент")
+    fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean {
+        val prepared = sentence.lowercase()
 
-    fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean =
-        wordsToFind.any { it in sentence.lowercase() }
+        for (word in wordsToFind) {
+            if (word in prepared) {
+                return true
+            }
+        }
 
-    fun matchFanEnjoyer(text: String): Boolean = fanEnjoyerTextRegex.any { it.matches(text) }
+        return false
+    }
 
-    fun matchBase(text: String): Boolean = based.any { it in text.lowercase() }
-    fun matchWoman(text: String) = women.any { it == text.lowercase() }
+    fun matchFanEnjoyer(text: String): Boolean = fanEnjoyerTextRegex.matches(text)
 }
