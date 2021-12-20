@@ -1,8 +1,8 @@
 class TextMatcher {
 
     private val fanEnjoyerTextRegex = listOf(
-        "^[A-zА-я0-9 ]+( > )[A-zА-я0-9 ]+\$".toRegex(),
-        "^[A-zА-я0-9 ]+( < )[A-zА-я0-9 ]+\$".toRegex()
+        "^[\\w\\W]+( > )[\\w\\W]+\$".toRegex(),
+        "^[\\w\\W]+( < )[\\w\\W]+\$".toRegex()
     )
 
     fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean {

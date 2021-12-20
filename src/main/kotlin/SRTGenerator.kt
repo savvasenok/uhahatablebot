@@ -7,7 +7,7 @@ interface SRTGenerator {
 
     class Base : SRTGenerator {
         override fun createFanEnjoyerSubtitles(fan: String, enjoyer: String): Pair<String, String> {
-            val subtitlesFan = "Average \"$fan\" fan"
+            val subtitlesFan = "Average $fan fan"
             val subtitlesEnjoyer = "Average $enjoyer enjoyer"
 
             return Pair(
