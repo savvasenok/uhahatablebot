@@ -14,6 +14,8 @@ import dev.inmo.tgbotapi.utils.PreviewFeature
 import dev.inmo.tgbotapi.utils.filenameFromUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
@@ -32,8 +34,10 @@ suspend fun main(args: Array<String>) {
         println(getMe())
 
         onText({ textMatcher.matchAtLeastOne(it.content.text, WordTriggers.cringe) }) {
-            sendActionUploadDocument(it.chat)
-            sendVideo(it.chat, fileManager.getCringeVideo().asMultipartFile())
+            launch {
+                sendActionUploadDocument(it.chat)
+                sendVideo(it.chat, fileManager.getCringeVideo().asMultipartFile())
+            }
         }
 
         onText(
@@ -42,21 +46,22 @@ suspend fun main(args: Array<String>) {
                         it.replyTo != null
             }
         ) {
-            try {
+            launch {
                 sendActionRecordVideo(it.chat)
                 val photoMessage = it.replyTo as CommonMessage<PhotoContent>
                 val pathedFile = bot.getFileAdditionalInfo(photoMessage.content)
-
                 fileManager.savePhoto(pathedFile.filePath.filenameFromUrl, bot.downloadFile(pathedFile))
-                val video = memeCreator.createSniffMeme(pathedFile.filePath.filenameFromUrl, it.messageId.toString())
+                val video: File
+                withContext(Dispatchers.Default) {
+                    video = memeCreator.createSniffMeme(pathedFile.filePath.filenameFromUrl, it.messageId.toString())
+                }
 
                 sendActionUploadDocument(it.chat)
-                sendVideo(it.chat, video.asMultipartFile())
-
-                fileManager.deleteSaved(pathedFile.filePath.filenameFromUrl)
-                fileManager.deleteOutput(it.messageId.toString())
-            } catch (e: Exception) {
-                // pass
+                withContext(Dispatchers.IO) {
+                    sendVideo(it.chat, video.asMultipartFile(), replyToMessageId = it.messageId)
+                    fileManager.deleteSaved(pathedFile.filePath.filenameFromUrl)
+                    fileManager.deleteOutput(it.messageId.toString())
+                }
             }
         }
 
@@ -66,17 +71,25 @@ suspend fun main(args: Array<String>) {
             val bigger = (">" in it.content.text)
             val splitted = if (bigger) it.content.text.split(" > ") else it.content.text.split(" < ")
             if (splitted.size == 2) {
-                sendActionRecordVideo(it.chat)
-                val fan = if (bigger) splitted[1] else splitted[0]
-                val enjoyer = if (bigger) splitted[0] else splitted[1]
 
-                val (fanSubs, enjoyerSubs) = fileManager.createFanEnjoyerSubs(fan, enjoyer, it.messageId.toString())
-                val video = memeCreator.createFanEnjoyerMeme(fanSubs, enjoyerSubs, it.messageId.toString())
+                launch {
+                    sendActionRecordVideo(it.chat)
+                    val fan = if (bigger) splitted[1] else splitted[0]
+                    val enjoyer = if (bigger) splitted[0] else splitted[1]
 
-                sendActionUploadDocument(it.chat)
-                sendVideo(it.chat, video.asMultipartFile())
+                    val (fanSubs, enjoyerSubs) = fileManager.createFanEnjoyerSubs(fan, enjoyer, it.messageId.toString())
 
-                fileManager.deleteOutput(it.messageId.toString())
+                    val video: File
+                    withContext(Dispatchers.Default) {
+                        video = memeCreator.createFanEnjoyerMeme(fanSubs, enjoyerSubs, it.messageId.toString())
+                    }
+
+                    sendActionUploadDocument(it.chat)
+                    withContext(Dispatchers.IO) {
+                        sendVideo(it.chat, video.asMultipartFile(), replyToMessageId = it.messageId)
+                        fileManager.deleteOutput(it.messageId.toString())
+                    }
+                }
             }
         }
     }.join()
