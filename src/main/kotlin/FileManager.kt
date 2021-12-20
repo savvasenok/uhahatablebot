@@ -6,6 +6,8 @@ import java.io.File
 
 interface FileManager {
 
+    val logFile: File
+
     fun savePhoto(filename: String, bytes: ByteArray)
     fun getCringeVideo(): File
 
@@ -27,6 +29,10 @@ interface FileManager {
         private val contentFolder = File(main, "content")
         private val savedContentFolder = File(main, "saved")
         private val outputContentFolder = File(main, "output")
+
+        override val logFile = File(main, "log.txt").apply {
+            createNewFile()
+        }
 
         init {
             if (!contentFolder.exists()) contentFolder.mkdir()
