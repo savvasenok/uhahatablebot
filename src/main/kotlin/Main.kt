@@ -92,5 +92,12 @@ suspend fun main(args: Array<String>) {
                 }
             }
         }
+
+        onText({ textMatcher.matchBase(it.content.text) }) {
+            launch(Dispatchers.IO) {
+                val videoToSend = listOf(fileManager.getBasedVideo(), fileManager.getItsBaseVideo()).random()
+                sendVideo(it.chat, videoToSend.asMultipartFile(), replyToMessageId = it.messageId)
+            }
+        }
     }.join()
 }
