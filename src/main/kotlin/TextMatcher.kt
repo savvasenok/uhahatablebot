@@ -5,17 +5,12 @@ class TextMatcher {
         "^[\\w\\W]+( < )[\\w\\W]+\$".toRegex()
     )
 
-    fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean {
-        val prepared = sentence.lowercase()
+    private val based = listOf("база", "базе", "базу", "базы", "базой", "base", "based")
 
-        for (word in wordsToFind) {
-            if (word in prepared) {
-                return true
-            }
-        }
-
-        return false
-    }
+    fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean =
+        wordsToFind.any { it in sentence.lowercase() }
 
     fun matchFanEnjoyer(text: String): Boolean = fanEnjoyerTextRegex.any { it.matches(text) }
+
+    fun matchBase(text: String): Boolean = based.any { it in text.lowercase() }
 }

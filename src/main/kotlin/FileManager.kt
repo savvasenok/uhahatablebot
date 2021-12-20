@@ -1,7 +1,4 @@
-import content.CringeVideo
-import content.EnjoyerVideo
-import content.FanVideo
-import content.SniffVideo
+import content.*
 import java.io.File
 
 interface FileManager {
@@ -10,6 +7,8 @@ interface FileManager {
 
     fun savePhoto(filename: String, bytes: ByteArray)
     fun getCringeVideo(): File
+    fun getItsBaseVideo(): File
+    fun getBasedVideo(): File
 
     fun getSniffVideoPath(): String
     fun getFanVideoPath(): String
@@ -48,9 +47,10 @@ interface FileManager {
         }
 
         override fun getCringeVideo(): File = CringeVideo(contentFolder).file
+        override fun getItsBaseVideo(): File = ItsBaseVideo(contentFolder).file
+        override fun getBasedVideo(): File = BasedVideo(contentFolder).file
 
         override fun getSniffVideoPath(): String = SniffVideo(contentFolder).file.path
-
         override fun getFanVideoPath(): String = FanVideo(contentFolder).file.path
         override fun getEnjoyerVideoPath(): String = EnjoyerVideo(contentFolder).file.path
 
