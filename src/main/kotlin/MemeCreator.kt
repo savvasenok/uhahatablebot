@@ -16,7 +16,7 @@ interface MemeCreator {
                         "$outputName.mp4"
                     ).path
                 }"
-            sniffCommand.runCommand()
+            sniffCommand.runCommand(fileManager.logFile)
             return fileManager.getOutputPath("$outputName.mp4")
         }
 
@@ -34,9 +34,9 @@ interface MemeCreator {
                     fileManager.getOutputPath("${outputName}.mp4").path
                 }"
 
-            fanCommand.runCommand()
-            enjoyerCommand.runCommand()
-            connectVideoAndAddAudioCommand.runCommand()
+            fanCommand.runCommand(fileManager.logFile)
+            enjoyerCommand.runCommand(fileManager.logFile)
+            connectVideoAndAddAudioCommand.runCommand(fileManager.logFile)
 
             fileManager.deleteOutput("${outputName}fan")
             fileManager.deleteOutput("${outputName}enjoyer")
@@ -48,10 +48,7 @@ interface MemeCreator {
     }
 }
 
-fun String.runCommand() = ProcessBuilder(
-    "\\s".toRegex()
-        .split(this)
-)
-    .redirectError(File("/home/savvasenok/Desktop/test.txt"))
+fun String.runCommand(logFile: File) = ProcessBuilder("\\s".toRegex().split(this))
+    .redirectError(logFile)
     .start()
     .waitFor()
