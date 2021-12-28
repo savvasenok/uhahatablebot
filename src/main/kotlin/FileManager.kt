@@ -20,6 +20,7 @@ interface FileManager {
     fun deleteOutput(filename: String)
     fun createFanEnjoyerSubs(fan: String, enjoyer: String, filename: String): Pair<File, File>
     fun getFanEnjoyerMusicPath(): File
+    fun getWomenVideo(): File
 
     class Base(
         private val srtGenerator: SRTGenerator,
@@ -89,5 +90,7 @@ interface FileManager {
         }
 
         override fun getFanEnjoyerMusicPath() = File(contentFolder, "fan-enjoyer.mp3")
+
+        override fun getWomenVideo(): File = Women(contentFolder).file
     }
 }

@@ -99,5 +99,11 @@ suspend fun main(args: Array<String>) {
                 sendVideo(it.chat, videoToSend.asMultipartFile(), replyToMessageId = it.messageId)
             }
         }
+
+        onText({ textMatcher.matchWoman(it.content.text) && it.replyTo != null }) {
+            launch(Dispatchers.IO) {
+                sendVideo(it.chat, fileManager.getWomenVideo().asMultipartFile(), replyToMessageId = it.messageId)
+            }
+        }
     }.join()
 }
