@@ -6,7 +6,8 @@ class TextMatcher {
     )
 
     private val based = listOf("база", "базе", "базу", "базы", "базой", "base", "based")
-    private val women = listOf("женщина", "женщины", "woman", "women", "women moment")
+    private val women =
+        listOf("женщина", "женщины", "woman", "women", "women moment", "woman moment", "вумен", "вумен момент")
 
     fun matchAtLeastOne(sentence: String, wordsToFind: List<String>): Boolean =
         wordsToFind.any { it in sentence.lowercase() }
