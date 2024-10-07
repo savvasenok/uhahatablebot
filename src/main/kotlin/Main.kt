@@ -1,4 +1,4 @@
-import dev.inmo.tgbotapi.bot.Ktor.telegramBot
+import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.files.downloadFile
 import dev.inmo.tgbotapi.extensions.api.get.getFileAdditionalInfo
@@ -9,8 +9,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPoll
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onText
 import dev.inmo.tgbotapi.requests.abstracts.asMultipartFile
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.media.PhotoContent
-import dev.inmo.tgbotapi.utils.PreviewFeature
+import dev.inmo.tgbotapi.types.message.content.PhotoContent
 import dev.inmo.tgbotapi.utils.filenameFromUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-@OptIn(PreviewFeature::class)
 suspend fun main(args: Array<String>) {
 
     val textMatcher = TextMatcher()
@@ -58,7 +56,7 @@ suspend fun main(args: Array<String>) {
 
                 sendActionUploadDocument(it.chat)
                 withContext(Dispatchers.IO) {
-                    sendVideo(it.chat, video.asMultipartFile(), replyToMessageId = it.messageId)
+                    sendVideo(it.chat, video.asMultipartFile())
                     fileManager.deleteSaved(pathedFile.filePath.filenameFromUrl)
                     fileManager.deleteOutput(it.messageId.toString())
                 }
@@ -86,7 +84,10 @@ suspend fun main(args: Array<String>) {
 
                     sendActionUploadDocument(it.chat)
                     withContext(Dispatchers.IO) {
-                        sendVideo(it.chat, video.asMultipartFile(), replyToMessageId = it.messageId)
+                        sendVideo(
+                            it.chat,
+                            video.asMultipartFile(),
+                        )
                         fileManager.deleteOutput(it.messageId.toString())
                     }
                 }
@@ -96,7 +97,10 @@ suspend fun main(args: Array<String>) {
         onText({ textMatcher.matchBase(it.content.text) }) {
             launch(Dispatchers.IO) {
                 val videoToSend = listOf(fileManager.getBasedVideo(), fileManager.getItsBaseVideo()).random()
-                sendVideo(it.chat, videoToSend.asMultipartFile(), replyToMessageId = it.messageId)
+                sendVideo(
+                    it.chat.id,
+                    videoToSend.asMultipartFile()
+                )
             }
         }
 
@@ -105,7 +109,6 @@ suspend fun main(args: Array<String>) {
                 sendVideo(
                     it.chat,
                     fileManager.getWomenVideo().asMultipartFile(),
-                    replyToMessageId = it.replyTo?.messageId ?: it.messageId
                 )
             }
         }
