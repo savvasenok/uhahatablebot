@@ -17,3 +17,9 @@ dependencies {
 kotlin {
     jvmToolchain(21)
 }
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+}

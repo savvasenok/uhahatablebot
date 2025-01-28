@@ -12,36 +12,25 @@ interface MemeCreator {
         override fun createSniffMeme(overlayPhotoFilename: String, outputName: String): File {
             val sniffCommand =
                 "ffmpeg -i ${fileManager.getSniffVideoPath()} -i ${fileManager.getSavedContent(overlayPhotoFilename)} -b:v 1M -filter_complex [1:v]scale=640:395[ovrl],[0:v][ovrl]overlay=(0):(0) ${
-                    fileManager.getOutputPath(
-                        "$outputName.mp4"
-                    ).path
+                    fileManager.getOutputPath("$outputName.mp4").path
                 }"
             sniffCommand.runCommand(fileManager.logFile)
             return fileManager.getOutputPath("$outputName.mp4")
         }
 
         override fun createFanEnjoyerMeme(fan: File, enjoyer: File, outputName: String): File {
-            val fanCommand =
-                "ffmpeg -y -i ${fileManager.getFanVideoPath()} -vf subtitles=${fan.path}:force_style='Fontsize=12,Alignment=6' ${
-                    fileManager.getOutputPath("${outputName}fan.mp4").path
-                }"
-            val enjoyerCommand =
-                "ffmpeg -y -i ${fileManager.getEnjoyerVideoPath()} -vf subtitles=${enjoyer.path}:force_style='Fontsize=12,Alignment=6' ${
-                    fileManager.getOutputPath("${outputName}enjoyer.mp4").path
-                }"
-            val connectVideoAndAddAudioCommand =
-                "ffmpeg -i ${fileManager.getOutputPath("${outputName}fan.mp4").path} -i ${fileManager.getOutputPath("${outputName}enjoyer.mp4").path} -i ${fileManager.getFanEnjoyerMusicPath().path} -filter_complex hstack=inputs=2 ${
-                    fileManager.getOutputPath("${outputName}.mp4").path
-                }"
+            val output = fileManager.getOutputPath("${outputName}.mp4").path
+            val fanVid = fileManager.getFanVideoPath()
+            val fanSubs = fan.path
+            val enjVid = fileManager.getEnjoyerVideoPath()
+            val enjSubs = enjoyer.path
+            val music = fileManager.getFanEnjoyerMusicPath().path
+            val command =
+                """ffmpeg -y -i $fanVid -i $enjVid -i $music -filter_complex [0:v]subtitles=$fanSubs:force_style='Fontsize=12,Alignment=6'[fan];[1:v]subtitles=$enjSubs:force_style='Fontsize=12,Alignment=6'[enjoyer];[fan][enjoyer]hstack=inputs=2[video];[video]drawtext=text='@uhahatablebot':fontcolor=white@0.7:x=w-text_w-12:y=h-text_h-12 $output"""
 
-            fanCommand.runCommand(fileManager.logFile)
-            enjoyerCommand.runCommand(fileManager.logFile)
-            connectVideoAndAddAudioCommand.runCommand(fileManager.logFile)
+            println(command)
 
-            fileManager.deleteOutput("${outputName}fan")
-            fileManager.deleteOutput("${outputName}enjoyer")
-            fileManager.deleteSaved(fan.name)
-            fileManager.deleteSaved(enjoyer.name)
+            command.runCommand(fileManager.logFile)
 
             return fileManager.getOutputPath("$outputName.mp4")
         }
